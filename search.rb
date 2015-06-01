@@ -4,67 +4,49 @@ x = Array.new
 puts "Enter Required Input: Please put end after complete the input"
 y = ''
 
-# P Ford Car Review
-# P Review Car
-# P Review Ford
-# P Toyota Car
-# P Honda Car
-# P Car
-# Q Ford
-# Q Car
-# Q Review
-# Q Ford Review
-# Q Ford Car
-# Q cooking French
+
 h_p = {}
 h_q = []
 while y != "end"
-  y = gets.chomp
-  x.push y
+	y = gets.chomp
+	x.push y
 end
 x.delete ('end')
 x.compact
-#puts "You entered: " + x.sort.to_s
-#puts "Objects in array: " + x.size.to_s
 
-#rank of the value in the hash
 def set_rank(h, val)
-  h_r = {}
-  h.each{|k,v| h_r[k] = v.split(" ").index(val.to_s)}
-  return h_r
+	h_r = {}
+	h.each{|k,v| h_r[k] = v.split(" ").index(val.to_s).to_i}
+	h_r
 end  
 
+def sort_page(a, j=nil)
+	a.take_while{}
+end	
+
 x.each_with_index do |xx, i|
-  if xx[0] == "P" || xx[0] =="p"
-    h_p["P#{i+1}"] = xx.delete("P").strip!
-  else
-    h_q << xx.delete("Q").strip!  
-  end
+	if xx[0] == "P" || xx[0] =="p"
+		h_p["P#{i+1}"] = xx.delete("P").strip!
+	else
+		h_q << xx.delete("Q").strip!  
+	end
 end
 
-puts h_p
-#puts h_q  
-
-search_v = {}
-#h_q.each do |q|
-#  if q.split(" ").size == 1
-#    h_p.select{|k,v| search_v[k] = v if v.include? q }
-#  else
-q = h_q[4]
-puts q
-q.split(" ").each do |qq|
-  h_p.select{|k,v| search_v[k] = v if v.include? qq }
-
-#    end   
-# end   
+h_q.each_with_index do |q,i|
+	main_h = {}
+	a = []
+	search_v = {}
+	if q.split(" ").size == 1
+		h_p.select{|k,v| search_v[k] = v if v.include? q }
+		main_h = set_rank(search_v, q)
+		
+	else
+        q.split(" ").each_with_index do |qq, j|
+			h_p.select{|k,v| search_v[k] = v if v.include? qq }
+		    a << set_rank(search_v, qq).reject{|k,v| v.nil?}
+		    sort_page(a, j)
+	    end
+	end
+puts "Q#{i+1}: " + main_h.keys.join(",")	 unless main_h.empty?
+puts "Q#{i+1}: " + a.inject({}, :merge).keys.join(",") unless a.empty? || a.nil?
 end
-
-puts search_v
-q.split(" ").each do |qq|
-  puts qq
-  puts search_v
-  puts set_rank(search_v, qq)
-end
-#h_m = Hash[search_v.sort_by{|k,v| v}]
-#puts h_m.keys.join(" ")
-
