@@ -20,9 +20,6 @@ def set_rank(h, val)
 	h_r
 end  
 
-def sort_page(a, j=nil)
-	a.take_while{}
-end	
 
 x.each_with_index do |xx, i|
 	if xx[0] == "P" || xx[0] =="p"
@@ -41,12 +38,32 @@ h_q.each_with_index do |q,i|
 		main_h = set_rank(search_v, q)
 		
 	else
-    q.split(" ").each_with_index do |qq, j|
-		h_p.select{|k,v| search_v[k] = v if v.include? qq }
+		common = []
+
+       q.split(" ").each_with_index do |qq, j|
+			h_p.select{|k,v| search_v[k] = v if v.include? qq }
 		    a << set_rank(search_v, qq).reject{|k,v| v.nil?}
-		    sort_page(a, j)
-	  end
+	    end
+
+	    a.each do |aa|
+           common << (aa.to_a && a[0].to_a ).to_h
+        end
+        common = common.uniq 
 	end
+	remain = a
+	remain.each do |r|
+        common.each do |c|
+  	        c.keys.each do |k|
+               r.delete(k)
+            end 
+        end	
+    end
+
+remain = remain.inject({}, :merge).sort_by{|k,v| v}.to_h
+common =  common.inject({}, :merge).sort_by{|k,v| v}.to_h
+
+puts common.merge(remain)
+
 puts "Q#{i+1}: " + main_h.keys.join(",")	 unless main_h.empty?
 puts "Q#{i+1}: " + a.inject({}, :merge).keys.join(",") unless a.empty? || a.nil?
 end
